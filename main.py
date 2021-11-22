@@ -1,4 +1,4 @@
-import tkinter
+import tkinter, ast
 
 
 class GUI(tkinter.Tk):
@@ -30,25 +30,58 @@ class Input_Frame(tkinter.Frame):
         self.generate_parameters_button = tkinter.Button(self, text = "Generate Parameters", 
                         command = self.generate_parameters).grid(columnspan = 2, row = 1)
 
+        self.variables_frame = Variable_Frame(self)
+        self.variables_frame.grid(columnspan = 2, row = 2)
+
     def generate_parameters(self):
         self.equation = Equation(self.equation_stringvar.get())
 
+        self.variables_frame.clear_variables()
+
+        for variable_name in self.equation.get_variables():
+            self.variables_frame.add_variable(variable_name)
+
+
+class Variable_Frame(tkinter.Frame):
+
+    def __init__(self, root):
+        super().__init__(root)
+        
+        self.variables_widgets = []
+        
+        # self.add_variable("test")
+        # self.add_variable("rest")
+
+        # self.clear_variables()
+
+    def add_variable(self, variable_name):
+        row = len(self.variables_widgets)
+
+        label = tkinter.Label(self, text = variable_name + ": ")
+        label.grid(column = 0, row = row)
+
+        stringvar = tkinter.StringVar()
+        entry = tkinter.Entry(self, textvariable = stringvar)
+        entry.grid(column = 1, row = row)
+
+        self.variables_widgets.append([label, entry, stringvar])
+
+    def clear_variables(self):
+        for widgets in self.variables_widgets:
+            for widget in widgets:
+                if hasattr(widget, "destroy"):
+                    widget.destroy()
+
+        self.variables_widgets = []
+
 
 class Equation:
-
-    OPERATORS = [
-        "+",
-        "-",
-        "/",
-        "*",
-        "%"
-    ]
 
     def __init__(self, string):
         self.evaluate_string(string)
     
     def evaluate_string(self, string):
-
+        """
         raw_string = "".join([char for char in string if not char.isspace()])
 
         len_raw_string = len(raw_string)
@@ -61,18 +94,13 @@ class Equation:
             raise Exception("2nd character is not '='")
 
         self.variables = []
+        """
 
-        index = 2
-        while index < len_raw_string:
-            
-            next_operator_index = index
+        self.varibles = [node.id for node in ast.walk(ast.parse(string))
+            if type(node) is ast.Name]
 
-            while next_operator_index < len_raw_string and raw_string[next_operator_index] not in self.OPERATORS:
-                next_operator_index += 1
-
-            
-
-            index = next_operator_index + 1
+    def get_variables(self):
+        return self.varibles
 
 
 if __name__ == "__main__":
