@@ -45,8 +45,11 @@ class Equations_Input_2D(tkinter.Frame):
 
         self.constants_frame.clear_constants()
 
-        for constant_name in self.equation1.get_constants():
-            self.constants_frame.add_constant(constant_name)
-
+        constants_names = self.equation1.get_constants()
         for constant_name in self.equation2.get_constants():
+            if constant_name not in constants_names:
+                constants_names.append(constant_name)
+
+
+        for constant_name in constants_names:
             self.constants_frame.add_constant(constant_name)
