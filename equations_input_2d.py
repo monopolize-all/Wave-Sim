@@ -6,8 +6,12 @@ from constants_frame import Constants_Frame
 
 class Equations_Input_2D(tkinter.Frame):
 
-    def __init__(self, master):
+    def __init__(self, master, root):
         super().__init__(master)
+
+        self.root: tkinter.Tk = root
+
+        self.parameters_generated = False
 
         self.equations_input_frame = tkinter.Frame(self)
         self.equations_input_frame.grid(column = 0, row = 0)
@@ -33,15 +37,15 @@ class Equations_Input_2D(tkinter.Frame):
         self.equation1: Equation
         self.equation2: Equation
 
-        self.constants_frame = Constants_Frame(self)
+        self.constants_frame = Constants_Frame(self, root)
         self.constants_frame.grid(column = 0, row = 2)
 
     def generate_parameters(self):
-        self.equation1 = Equation(self.equation1_stringvar.get(), 
-                        func_get_constants_values = self.constants_frame.get_constants_values)
+        self.parameters_generated = True
 
-        self.equation2 = Equation(self.equation2_stringvar.get(), 
-                        func_get_constants_values = self.constants_frame.get_constants_values)
+        self.equation1 = Equation(self.equation1_stringvar.get())
+
+        self.equation2 = Equation(self.equation2_stringvar.get())
 
         self.constants_frame.clear_constants()
 

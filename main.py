@@ -14,7 +14,7 @@ class GUI(tkinter.Tk):
         self.title(self.TITLE)
         self.geometry("x".join(map(str, self.SIZE)))
 
-        self.input_frame = Input_Frame(self)
+        self.input_frame = Input_Frame(self, root = self)
         self.input_frame.pack()
 
 

@@ -1,12 +1,19 @@
 import ast
+import math
 
 
 class Equation:
 
-    def __init__(self, string, func_get_constants_values):
+    CONSTANTS_TO_IGNORE = ["x"]
+
+    def __init__(self, string):
         self.constants = []
-        self.eval_eq_string = ""
-        self.func_get_constants_values = func_get_constants_values
+        self.dependent_variable = ""
+        self.expression = ""
+        self.f_expression = ""
+        self.constants_values = {}
+        self.solveable = False
+        self.all_constants_present = False
 
         self.evaluate_string(string)
     
@@ -26,14 +33,39 @@ class Equation:
         self.constants = []
         """
 
-        eval_eq_string = string.split("=")[1]
+        self.dependent_variable, self.expression = string.split("=")
 
-        self.constants = [node.id for node in ast.walk(ast.parse(string))
-            if type(node) is ast.Name]
+        self.dependent_variable = self.dependent_variable.strip()
 
+        self.expression = self.expression.strip()
+
+        try:
+            self.constants = []
+            for node in ast.walk(ast.parse(string)):
+                if type(node) is ast.Name and node.id not in self.constants:
+                    self.constants.append(node.id)
+                    
+
+            #self.constants = [node.id for node in ast.walk(ast.parse(string))
+                #if type(node) is ast.Name]
+            
+            self.solveable = True
+            
+        except:
+            self.solveable = False
+            return
+        
         self.constants.pop(0)  # Remove the dependent variable
 
-        f_string_l = list(eval_eq_string)
+        index = 0
+        while index < len(self.constants):
+            if hasattr(math, self.constants[index]) or self.constants[index] in self.CONSTANTS_TO_IGNORE:
+                self.constants.pop(index)
+
+            else:
+                index += 1
+
+        f_string_l = list(self.expression)
 
         start_index = 0
 
@@ -42,28 +74,50 @@ class Equation:
             if f_string_l[start_index].isalpha():
                 stop_index = start_index
 
-                while stop_index < len(f_string_l) and f_string_l[stop_index].isalpha():
+                while stop_index < len(f_string_l) and f_string_l[stop_index].isalnum():
                     stop_index += 1
 
-                f_string_l.insert(start_index, "{")
-                f_string_l.insert(stop_index + 1, "}")
+                constant_name = "".join(f_string_l[start_index: stop_index])
+                if hasattr(math, constant_name):
+                    f_string_l.insert(start_index, "math.")
+                else:
+                    f_string_l.insert(start_index, "{")
+                    f_string_l.insert(stop_index + 1, "}")
 
                 start_index = stop_index + 2
 
             else:
                 start_index += 1
 
-        self.f_eval_eq_string = "".join(f_string_l).lstrip()
+        self.f_expression = "".join(f_string_l).lstrip()
         
     def get_constants(self):
         return self.constants
 
+    def update_constants_values(self, constants_values, all_constants_present = False):
+        self.all_constants_present = all_constants_present
+        self.constants_values = constants_values
+
     def solve(self, **variables):
-        kwargs = dict(zip(self.constants, self.func_get_constants_values()))
-        kwargs.update(variables)
 
-        eval_string = self.f_eval_eq_string.format(**kwargs)
+        # Adding constant values from self.constants_values for variable names not in variables
+        for key, val in self.constants_values.items():
+            if key not in variables:
+                variables[key] = val
 
-        print(self.f_eval_eq_string, eval_string, sep = "\n")
+        eval_string = self.f_expression.format(**variables)
 
-        return eval(eval_string)
+        #print(self.f_expression, eval_string, sep = "\t:\t")
+
+        try:
+            val = eval(eval_string)
+        
+        except:
+            return False
+
+        if type(val) not in [int, float]:
+            return False
+
+        return val
+
+# y = a * sin(w1*t+k1*x+c1) + b * sin(w2*t+k2*x+c2) + 200

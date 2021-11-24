@@ -6,8 +6,10 @@ from equations_input_2d import Equations_Input_2D
 
 class Input_Frame(tkinter.Frame):
 
-    def __init__(self, master):
+    def __init__(self, master, root):
         super().__init__(master)
+
+        self.root = root
 
         tkinter.Label(self, text = "Equation type: ").grid(column = 0, row = 0)
 
@@ -24,8 +26,8 @@ class Input_Frame(tkinter.Frame):
 
         self.equations_input_frame = None
 
-        self.equations_input_1D = Equations_Input_1D(self)
-        self.equations_input_2D = Equations_Input_2D(self)
+        self.equations_input_1D = Equations_Input_1D(self, root)
+        self.equations_input_2D = Equations_Input_2D(self, root)
 
     def equation_type_selected(self):
         equation_type = self.equation_type_var.get()
