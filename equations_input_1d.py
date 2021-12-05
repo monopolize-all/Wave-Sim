@@ -16,11 +16,12 @@ class Equations_Input_1D(tkinter.Frame):
 
         self.parameters_generated = False
         self.constants_values = {}
+        self.plottable = True
 
         self.equations_input_frame = tkinter.Frame(self)
         self.equations_input_frame.grid(column = 0, row = 0)
 
-        tkinter.Label(self.equations_input_frame, text="Equation: ").grid(column = 0, row = 0)
+        tkinter.Label(self.equations_input_frame, text="Equation: y = ").grid(column = 0, row = 0)
 
         self.equation_stringvar = tkinter.StringVar()
 
@@ -45,27 +46,15 @@ class Equations_Input_1D(tkinter.Frame):
     def init_graph(self):
         self.graph = Graph(self.root)
 
-    def show_error_message(self, message):
+    def show_error_message(self, message = ""):
         self.error_message_label.config(text = message)
-
-    def reset_error_message(self):
-        self.error_message_label.config(text = "")
 
     def generate_parameters(self, var = None, indx = None, mode = None):
         equation_string = self.equation_stringvar.get()
 
-        self.reset_error_message()
-        if equation_string == "":
-            self.show_error_message("Equation entry empty.")
-            return
-
-        elif "=" not in equation_string:
-            self.show_error_message("Equation does not have '=' symbol.")
-            return
-
         self.parameters_generated = True
 
-        self.equation = Equation(self.equation_stringvar.get())
+        self.equation = Equation(equation_string, error_msg_func = self.show_error_message)
 
         self.constants_frame.clear_constants()
 
@@ -74,43 +63,35 @@ class Equations_Input_1D(tkinter.Frame):
 
         self.on_constants_value_change()
 
+        self.plottable = True
+
     def on_constants_value_change(self, var = None, indx = None, mode = None):
 
         if self.time_widget:
             self.time_widget.reset_t_value()
 
-        all_constants_present = True
-
         for name, value in zip(self.constants_frame.active_constants_names, 
                     self.constants_frame.get_constants_values()):
-            try:
-                value = float(value)
-                self.constants_values[name] = value
-            except:
-                all_constants_present = False
+            self.constants_values[name] = value
 
-        self.reset_error_message()
-
-        if not all_constants_present:
-            self.show_error_message("Empty constant field.")
-
-        self.equation.update_constants_values(self.constants_values, all_constants_present)
+        self.equation.update_constants_values(self.constants_values)
 
         self.plot_on_graph()
 
     def plot_on_graph(self):
 
-        if not (self.equation.solveable and self.equation.all_constants_present):
-            return
-
         points_to_plot = []
 
-        if self.equation.dependent_variable == "y":
-            for x in range(self.graph.WIDTH):
-                y = self.equation.solve(x=x)
-                if y is False:
-                    return
-                points_to_plot.append([x, y])
+        if not self.plottable:
+            return
+
+        for x in range(self.graph.WIDTH):
+            y = self.equation.solve(x=x)
+            if y is False:
+                self.plottable = False
+                self.show_error_message("Invalid expression. (missing a '*' perhaps?)")
+                return
+            points_to_plot.append([x, y])
         
         self.graph.clear_canvas()
         self.graph.draw_points(points_to_plot)

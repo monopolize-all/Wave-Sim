@@ -4,58 +4,36 @@ import math
 
 class Equation:
 
-    CONSTANTS_TO_IGNORE = ["x"]
+    CONSTANTS_TO_IGNORE = ["x", "y"]
 
-    def __init__(self, string):
+    def __init__(self, string, error_msg_func):
         self.constants = []
-        self.dependent_variable = ""
         self.expression = ""
         self.f_expression = ""
         self.constants_values = {}
-        self.solveable = False
-        self.all_constants_present = False
+
+        self.error_message_func = error_msg_func
 
         self.evaluate_string(string)
     
-    def evaluate_string(self, string):
-        """
-        raw_string = "".join([char for char in string if not char.isspace()])
+    def evaluate_string(self, expression):
 
-        len_raw_string = len(raw_string)
+        self.expression = expression.strip()
 
-        print(raw_string)
-
-        self.result = raw_string[0]
-
-        if raw_string[1] != "=":
-            raise Exception("2nd character is not '='")
-
-        self.constants = []
-        """
-
-        self.dependent_variable, self.expression = string.split("=")
-
-        self.dependent_variable = self.dependent_variable.strip()
-
-        self.expression = self.expression.strip()
+        if "=" in self.expression:
+            self.error_message_func("Expression cannot have '=' symbol.")
+            return
 
         try:
+            self.error_message_func()
             self.constants = []
-            for node in ast.walk(ast.parse(string)):
+            for node in ast.walk(ast.parse(self.expression)):
                 if type(node) is ast.Name and node.id not in self.constants:
                     self.constants.append(node.id)
-                    
-
-            #self.constants = [node.id for node in ast.walk(ast.parse(string))
-                #if type(node) is ast.Name]
-            
-            self.solveable = True
             
         except:
-            self.solveable = False
+            self.error_message_func("Invalid expression.")
             return
-        
-        self.constants.pop(0)  # Remove the dependent variable
 
         index = 0
         while index < len(self.constants):
@@ -94,8 +72,7 @@ class Equation:
     def get_constants(self):
         return self.constants
 
-    def update_constants_values(self, constants_values, all_constants_present = False):
-        self.all_constants_present = all_constants_present
+    def update_constants_values(self, constants_values, ):
         self.constants_values = constants_values
 
     def solve(self, **variables):
@@ -119,5 +96,3 @@ class Equation:
             return False
 
         return val
-
-# y = a * sin(w1*t+k1*x+c1) + b * sin(w2*t+k2*x+c2) + 200

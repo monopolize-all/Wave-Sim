@@ -21,3 +21,7 @@ class GUI(tkinter.Tk):
 if __name__ == "__main__":
     app = GUI()
     app.mainloop()
+
+
+# y = a * sin(w1*t+k1*x+c1) + b * sin(w2*t+k2*x+c2) + 200
+# 200 * (1 + sin(w*t))
