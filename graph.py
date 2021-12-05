@@ -23,6 +23,8 @@ class Graph(tkinter.Toplevel):
                                 height = self.PLOTTER_HEIGHT)
         self.canvas.pack()
 
+        self.points_drawn_currently = []
+
         self.point_radius = 1
         self.point_radius_slider = Variable_Slider_Widget(self, "Pointer radius", 
                                 validate_func = self.point_radius_slider_validate)
@@ -30,8 +32,6 @@ class Graph(tkinter.Toplevel):
         self.point_radius_slider.set_value(1)
         self.point_radius_slider.set_number_of_values(20)
         self.point_radius_slider.pack()
-
-        self.points_drawn_currently = []
 
     def point_radius_slider_validate(self, var = None, indx = None, mode = None):
         self.point_radius = self.point_radius_slider.get_value()
