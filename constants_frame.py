@@ -169,6 +169,9 @@ class Time_Slider_Widget(tkinter.Frame):
     def refresh_graph(self):
         self.after(int(self.graph_refresh_delay), self.refresh_graph)
 
+        if not self.master.master.enabled:
+            return
+
         old_t_var_value = self.t_var.get()
         new_t_value = old_t_var_value + self.t_var_speed * (time.time() - self.time_at_last_refresh)
         self.t_var.set(new_t_value)
@@ -176,9 +179,9 @@ class Time_Slider_Widget(tkinter.Frame):
         self.time_at_last_refresh = time.time()
 
         if "t" in self.root.input_frame.equations_input_frame.constants_values:
-            self.root.input_frame.equations_input_frame.constants_values["t"] = new_t_value
+            self.master.master.constants_values["t"] = new_t_value
 
-        self.root.input_frame.equations_input_frame.plot_on_graph()
+        self.master.master.plot_on_graph()
 
     def on_t_var_speed_change(self, var, indx, mode):
         self.t_var_speed = self.t_var_speed_slider_widget.get_value()

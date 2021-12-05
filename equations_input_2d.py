@@ -3,57 +3,95 @@ import tkinter
 from equation import Equation
 from constants_frame import Constants_Frame
 
-
 class Equations_Input_2D(tkinter.Frame):
 
-    def __init__(self, master, root):
+    TIME_FLOW_RATE_LOW = 0
+    TIME_FLOW_RATE_HIGH = 5
+
+    def __init__(self, master, root, graph):
         super().__init__(master)
 
         self.root: tkinter.Tk = root
 
         self.parameters_generated = False
+        self.constants_values = {}
+        self.plottable = True  # False if unable to plot on graph (error in expression evaluation)
+        self.enabled = False  # True when selected in input_frame.py
 
         self.equations_input_frame = tkinter.Frame(self)
         self.equations_input_frame.grid(column = 0, row = 0)
 
-        tkinter.Label(self.equations_input_frame, text="Equation 1: ").grid(column = 0, row = 0)
-        self.equation1_stringvar = tkinter.StringVar()
-        self.equation1_entry = tkinter.Entry(self.equations_input_frame, 
-                                textvariable = self.equation1_stringvar)
-        self.equation1_entry.grid(column = 1, row = 0)
+        tkinter.Label(self.equations_input_frame, text="Equation: y = ").grid(column = 0, row = 0)
 
-        tkinter.Label(self.equations_input_frame, text="Equation 2: ").grid(column = 0, row = 1)
-        self.equation2_stringvar = tkinter.StringVar()
-        self.equation2_entry = tkinter.Entry(self.equations_input_frame, 
-                                textvariable = self.equation2_stringvar)
-        self.equation2_entry.grid(column = 1, row = 1)
+        self.equation_stringvar = tkinter.StringVar()
 
+        self.equation_stringvar.trace_add("write", self.generate_parameters)
+        self.equation_entry = tkinter.Entry(self.equations_input_frame, textvariable = self.equation_stringvar)
+        self.equation_entry.grid(column = 1, row = 0)
 
-        self.generate_parameters_button = tkinter.Button(self, text = "Generate Parameters", 
-                        command = self.generate_parameters)
-
-        self.generate_parameters_button.grid(column = 0, row = 1)
-
-        self.equation1: Equation
-        self.equation2: Equation
+        self.equation: Equation
 
         self.constants_frame = Constants_Frame(self, root)
-        self.constants_frame.grid(column = 0, row = 2)
+        self.constants_frame.grid(column = 0, row = 1)
 
-    def generate_parameters(self):
+        self.time_widget = None
+
+        self.error_message_label = tkinter.Label(self, text = "")
+        self.error_message_label.grid(column = 0, row = 2)
+
+        self.graph = graph
+
+    def show_error_message(self, message = ""):
+        self.error_message_label.config(text = message)
+
+    def generate_parameters(self, var = None, indx = None, mode = None):
+        equation_string = self.equation_stringvar.get()
+
         self.parameters_generated = True
 
-        self.equation1 = Equation(self.equation1_stringvar.get())
-
-        self.equation2 = Equation(self.equation2_stringvar.get())
+        self.equation = Equation(equation_string, error_msg_func = self.show_error_message)
 
         self.constants_frame.clear_constants()
 
-        constants_names = self.equation1.get_constants()
-        for constant_name in self.equation2.get_constants():
-            if constant_name not in constants_names:
-                constants_names.append(constant_name)
+        for constant_name in self.equation.get_constants():
+            self.constants_frame.add_constant(constant_name, validate_func = self.on_constants_value_change)
 
+        self.on_constants_value_change()
 
-        for constant_name in constants_names:
-            self.constants_frame.add_constant(constant_name)
+        self.plottable = True
+
+    def on_constants_value_change(self, var = None, indx = None, mode = None):
+
+        if self.time_widget:
+            self.time_widget.reset_t_value()
+
+        for name, value in zip(self.constants_frame.active_constants_names, 
+                    self.constants_frame.get_constants_values()):
+            self.constants_values[name] = value
+
+        self.equation.update_constants_values(self.constants_values)
+
+        self.plot_on_graph()
+
+    def plot_on_graph(self):
+
+        points_to_plot = []
+
+        if not self.plottable:
+            return
+
+        for x in range(self.graph.WIDTH):
+            y = self.equation.solve(x=x)
+            if y is False:
+                self.plottable = False
+                if ".." in self.equation.expression:
+                    self.show_error_message("Invalid expression. (invalid '..' perhaps?)")
+                else:
+                    self.show_error_message("Invalid expression. (missing '*' perhaps?)")
+                return
+            points_to_plot.append([x, y])
+        
+        self.graph.clear_canvas()
+        self.graph.draw_points(points_to_plot)
+
+        return True  # For validation of parameters entry to continue

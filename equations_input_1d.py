@@ -2,21 +2,21 @@ import tkinter
 
 from equation import Equation
 from constants_frame import Constants_Frame
-from graph import Graph
 
 class Equations_Input_1D(tkinter.Frame):
 
     TIME_FLOW_RATE_LOW = 0
     TIME_FLOW_RATE_HIGH = 5
 
-    def __init__(self, master, root):
+    def __init__(self, master, root, graph):
         super().__init__(master)
 
         self.root: tkinter.Tk = root
 
         self.parameters_generated = False
         self.constants_values = {}
-        self.plottable = True
+        self.plottable = True  # False if unable to plot on graph (error in expression evaluation)
+        self.enabled = False  # True when selected in input_frame.py
 
         self.equations_input_frame = tkinter.Frame(self)
         self.equations_input_frame.grid(column = 0, row = 0)
@@ -39,12 +39,7 @@ class Equations_Input_1D(tkinter.Frame):
         self.error_message_label = tkinter.Label(self, text = "")
         self.error_message_label.grid(column = 0, row = 2)
 
-        self.graph: Graph
-
-        self.root.after_idle(self.init_graph)
-
-    def init_graph(self):
-        self.graph = Graph(self.root)
+        self.graph = graph
 
     def show_error_message(self, message = ""):
         self.error_message_label.config(text = message)
@@ -89,7 +84,10 @@ class Equations_Input_1D(tkinter.Frame):
             y = self.equation.solve(x=x)
             if y is False:
                 self.plottable = False
-                self.show_error_message("Invalid expression. (missing a '*' perhaps?)")
+                if ".." in self.equation.expression:
+                    self.show_error_message("Invalid expression. (invalid '..' perhaps?)")
+                else:
+                    self.show_error_message("Invalid expression. (missing '*' perhaps?)")
                 return
             points_to_plot.append([x, y])
         

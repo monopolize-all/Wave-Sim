@@ -2,6 +2,7 @@ import tkinter
 
 from equations_input_1d import Equations_Input_1D
 from equations_input_2d import Equations_Input_2D
+from graph import Graph
 
 
 class Input_Frame(tkinter.Frame):
@@ -26,8 +27,13 @@ class Input_Frame(tkinter.Frame):
 
         self.equations_input_frame = None
 
-        self.equations_input_1D = Equations_Input_1D(self, root)
-        self.equations_input_2D = Equations_Input_2D(self, root)
+        self.root.after_idle(self.init_widgets)
+
+    def init_widgets(self):
+        self.graph = Graph(self.root)
+
+        self.equations_input_1D = Equations_Input_1D(self, self.root, self.graph)
+        self.equations_input_2D = Equations_Input_2D(self, self.root, self.graph)
 
     def equation_type_selected(self):
         equation_type = self.equation_type_var.get()
@@ -39,6 +45,8 @@ class Input_Frame(tkinter.Frame):
             self.equations_input_1D.grid(column = 0, row = 2)
 
             self.equations_input_frame = self.equations_input_1D
+            self.equations_input_1D.enabled = True
+            self.equations_input_2D.enabled = False
 
         elif equation_type == "2D":
             if self.equations_input_frame is not None:
@@ -47,3 +55,5 @@ class Input_Frame(tkinter.Frame):
             self.equations_input_2D.grid(column = 0, row = 2)
 
             self.equations_input_frame = self.equations_input_2D
+            self.equations_input_1D.enabled = False
+            self.equations_input_2D.enabled = True
