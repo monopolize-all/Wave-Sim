@@ -57,3 +57,9 @@ class Input_Frame(tkinter.Frame):
             self.equations_input_frame = self.equations_input_2D
             self.equations_input_1D.enabled = False
             self.equations_input_2D.enabled = True
+
+        try: 
+            self.equations_input_frame.plot_on_graph()
+
+        except:
+            pass
