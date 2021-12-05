@@ -80,7 +80,7 @@ class Equations_Input_1D(tkinter.Frame):
         if not self.plottable:
             return
 
-        for x in range(self.graph.WIDTH):
+        for x in range(self.graph.PLOTTER_WIDTH):
             y = self.equation.solve(x=x)
             if y is False:
                 self.plottable = False
