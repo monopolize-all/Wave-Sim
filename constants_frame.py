@@ -1,4 +1,4 @@
-import tkinter, time, re
+import tkinter, time, math
 
 
 class Constants_Frame(tkinter.Frame):
@@ -73,10 +73,11 @@ class Variable_Slider_Widget(tkinter.Frame):
 
     SLIDER_DEFAULT_LOW = -100
     SLIDER_DEFAULT_HIGH = 100
-    NUMBER_OF_VALUES = 100
 
     def __init__(self, master, text, validate_func = None, result_var = None):
         super().__init__(master)
+
+        self.number_of_values = 100
 
         self.label = tkinter.Label(self, text = text)
         self.label.grid(column = 0, row = 0)
@@ -88,7 +89,7 @@ class Variable_Slider_Widget(tkinter.Frame):
         else:
             self.result_var = result_var
         
-        resolution = self.NUMBER_OF_VALUES // (self.SLIDER_DEFAULT_HIGH - self.SLIDER_DEFAULT_LOW)
+        resolution = self.number_of_values // (self.SLIDER_DEFAULT_HIGH - self.SLIDER_DEFAULT_LOW)
         self.slider = tkinter.Scale(self, variable = self.result_var, from_ = self.SLIDER_DEFAULT_LOW, 
                         to = self.SLIDER_DEFAULT_HIGH, orient = tkinter.HORIZONTAL,
                         resolution = resolution)
@@ -108,17 +109,28 @@ class Variable_Slider_Widget(tkinter.Frame):
 
     def on_update_low_var(self, var, indx, mode):
         self.slider.config(from_=self.slider_low_var.get())
-        resolution = (self.slider_high_var.get() - self.slider_low_var.get()) // self.NUMBER_OF_VALUES
 
     def on_update_high_var(self, var, indx, mode):
         self.slider.config(to_=self.slider_high_var.get())
+
+    def adjust_scale_resolution(self):
+        resolution = (self.slider_high_var.get() - self.slider_low_var.get()) / self.number_of_values
+
+        self.slider.configure(resolution = math.ceil(resolution))
 
     def set_limits(self, low_value, high_value):
         self.slider_low_var.set(low_value)
         self.slider_high_var.set(high_value)
 
+        self.adjust_scale_resolution()
+
     def set_value(self, value):
         self.result_var.set(value)
+
+    def set_number_of_values(self, value):
+        self.number_of_values = value
+
+        self.adjust_scale_resolution()
 
     def get_value(self):
         return float(self.result_var.get())
