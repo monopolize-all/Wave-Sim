@@ -23,7 +23,10 @@ if __name__ == "__main__":
     app.mainloop()
 
 
-# y = a * sin(w1*t+k1*x+c1) + b * sin(w2*t+k2*x+c2) + 200
+# a * sin(w1*t+k1*x+c1) + b * sin(w2*t+k2*x+c2) + 200
 # 200 * (1 + sin(w*t))
 # 100 * (2 + sin(0.2*t+0.05*x))
 # 100 * (2 + sin(0.2*t+0.05*x) + sin(0.2*t+0.025*x))
+
+# 200 + 100 * sin(t)
+# 200 + 100 * cos(t)

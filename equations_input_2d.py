@@ -21,15 +21,26 @@ class Equations_Input_2D(tkinter.Frame):
         self.equations_input_frame = tkinter.Frame(self)
         self.equations_input_frame.grid(column = 0, row = 0)
 
-        tkinter.Label(self.equations_input_frame, text="Equation: y = ").grid(column = 0, row = 0)
+        tkinter.Label(self.equations_input_frame, text="Parameter x = ").grid(column = 0, row = 0)
 
-        self.equation_stringvar = tkinter.StringVar()
 
-        self.equation_stringvar.trace_add("write", self.generate_parameters)
-        self.equation_entry = tkinter.Entry(self.equations_input_frame, textvariable = self.equation_stringvar)
-        self.equation_entry.grid(column = 1, row = 0)
+        self.equation_x_stringvar = tkinter.StringVar()
 
-        self.equation: Equation
+        self.equation_x_stringvar.trace_add("write", self.generate_parameters)
+        self.equation_x_entry = tkinter.Entry(self.equations_input_frame, textvariable = self.equation_x_stringvar)
+        self.equation_x_entry.grid(column = 1, row = 0)
+
+
+        tkinter.Label(self.equations_input_frame, text="Parameter y = ").grid(column = 0, row = 1)
+
+        self.equation_y_stringvar = tkinter.StringVar()
+
+        self.equation_y_stringvar.trace_add("write", self.generate_parameters)
+        self.equation_y_entry = tkinter.Entry(self.equations_input_frame, textvariable = self.equation_y_stringvar)
+        self.equation_y_entry.grid(column = 1, row = 1)
+
+        self.equation_x: Equation
+        self.equation_y: Equation
 
         self.constants_frame = Constants_Frame(self, root)
         self.constants_frame.grid(column = 0, row = 1)
@@ -45,15 +56,20 @@ class Equations_Input_2D(tkinter.Frame):
         self.error_message_label.config(text = message)
 
     def generate_parameters(self, var = None, indx = None, mode = None):
-        equation_string = self.equation_stringvar.get()
+        equation_x_string = self.equation_x_stringvar.get()
+        equation_y_string = self.equation_y_stringvar.get()
 
         self.parameters_generated = True
 
-        self.equation = Equation(equation_string, error_msg_func = self.show_error_message)
+        self.equation_x = Equation(equation_x_string, error_msg_func = self.show_error_message)
+        self.equation_y = Equation(equation_y_string, error_msg_func = self.show_error_message)
 
         self.constants_frame.clear_constants()
 
-        for constant_name in self.equation.get_constants():
+        for constant_name in self.equation_x.get_constants():
+            self.constants_frame.add_constant(constant_name, validate_func = self.on_constants_value_change)
+
+        for constant_name in self.equation_y.get_constants():
             self.constants_frame.add_constant(constant_name, validate_func = self.on_constants_value_change)
 
         self.on_constants_value_change()
@@ -69,7 +85,8 @@ class Equations_Input_2D(tkinter.Frame):
                     self.constants_frame.get_constants_values()):
             self.constants_values[name] = value
 
-        self.equation.update_constants_values(self.constants_values)
+        self.equation_x.update_constants_values(self.constants_values)
+        self.equation_y.update_constants_values(self.constants_values)
 
         self.plot_on_graph()
 
@@ -80,18 +97,13 @@ class Equations_Input_2D(tkinter.Frame):
         if not self.plottable:
             return
 
-        for x in range(self.graph.WIDTH):
-            y = self.equation.solve(x=x)
-            if y is False:
-                self.plottable = False
-                if ".." in self.equation.expression:
-                    self.show_error_message("Invalid expression. (invalid '..' perhaps?)")
-                else:
-                    self.show_error_message("Invalid expression. (missing '*' perhaps?)")
-                return
-            points_to_plot.append([x, y])
-        
-        self.graph.clear_canvas()
-        self.graph.draw_points(points_to_plot)
+        x = self.equation_x.solve()
+        y = self.equation_y.solve()
 
-        return True  # For validation of parameters entry to continue
+        if x is False or y is False:
+            self.plottable = False
+            self.show_error_message("Invalid expression. (missing '*' perhaps?)")
+            return
+
+        self.graph.clear_canvas()
+        self.graph.draw_point(x, y)
