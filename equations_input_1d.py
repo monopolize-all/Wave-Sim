@@ -93,5 +93,3 @@ class Equations_Input_1D(tkinter.Frame):
         
         self.graph.clear_canvas()
         self.graph.draw_points(points_to_plot)
-
-        return True  # For validation of parameters entry to continue
