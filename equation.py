@@ -1,5 +1,4 @@
-import ast
-import math
+import ast, math
 
 
 class Equation:

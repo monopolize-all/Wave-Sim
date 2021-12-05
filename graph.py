@@ -1,6 +1,6 @@
 import tkinter
 
-from constants_frame import Variable_Slider_Widget
+from util import Variable_Slider_Widget
 
 class Graph(tkinter.Toplevel):
 
