@@ -1,19 +1,18 @@
 # Wave-Sim
-A python application to display wave equations. Made using Python 3 and Pyglet.
+A python application to display wave equations. Made using Python 3 and tkinter.
 
 
 # Running the program
 
 To run the program, first clone this repository to a local directory.
 
-Then run the following command in a terminal opened from this directory to install all required dependencies:
+Then run main.py from the same terminal.
 
 ```
-pip install -r requirements.txt
+python3 main.py
 ```
 
-Finally run main.py from the same terminal.
-
+OR
 ```
 python main.py
 ```
