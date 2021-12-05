@@ -6,7 +6,7 @@ A python application to display wave equations. Made using Python 3 and tkinter.
 
 To run the program, first clone this repository to a local directory.
 
-Then run main.py from the same terminal.
+Then run main.py either from the terminal or by double clicking main.py file.
 
 ```
 python3 main.py
