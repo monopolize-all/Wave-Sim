@@ -16,7 +16,7 @@ class Graph(tkinter.Toplevel):
         x = mx + mw + 10
         y = my
 
-        #self.geometry(f"{self.PLOTTER_WIDTH}x{self.PLOTTER_HEIGHT}+{x}+{y}")
+        self.geometry(f"+{x}+{y}")
 
         self.canvas = tkinter.Canvas(self, bg = self.BACKGROUND_COLOUR, 
                                 width = self.PLOTTER_WIDTH, 
