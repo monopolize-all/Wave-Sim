@@ -18,9 +18,6 @@ python main.py
 ```
 
 
-# Known issues
+# Examples
 
-
-
-# Credits
 
