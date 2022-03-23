@@ -5,10 +5,10 @@ from util import Time_Slider_Widget, Variable_Slider_Widget
 
 class Constants_Frame(tkinter.Frame):
 
-    def __init__(self, master, root):
+    def __init__(self, master, GUI):
         super().__init__(master)
 
-        self.root = root
+        self.GUI = GUI
         
         self.constants_widgets = {}
         self.active_constants_names = []
@@ -25,7 +25,7 @@ class Constants_Frame(tkinter.Frame):
 
         if constant_name not in self.constants_widgets:
             if constant_name == "t":
-                widget = Time_Slider_Widget(self, self.root)
+                widget = Time_Slider_Widget(self, self.GUI)
 
                 self.master.time_widget = widget
 

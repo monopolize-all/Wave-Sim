@@ -8,10 +8,10 @@ class Equations_Input_1D(tkinter.Frame):
     TIME_FLOW_RATE_LOW = 0
     TIME_FLOW_RATE_HIGH = 5
 
-    def __init__(self, master, root, graph):
+    def __init__(self, master, GUI, graph):
         super().__init__(master)
 
-        self.root: tkinter.Tk = root
+        self.GUI: tkinter.Tk = GUI
 
         self.parameters_generated = False
         self.constants_values = {}
@@ -32,7 +32,7 @@ class Equations_Input_1D(tkinter.Frame):
 
         self.equation: Equation
 
-        self.constants_frame = Constants_Frame(self, root)
+        self.constants_frame = Constants_Frame(self, GUI)
         self.constants_frame.grid(column = 0, row = 1)
 
         self.time_widget = None

@@ -1,5 +1,6 @@
 import tkinter
 
+from examples_frame import Examples_Frame
 from equations_input_1d import Equations_Input_1D
 from equations_input_2d import Equations_Input_2D
 from graph import Graph
@@ -7,17 +8,20 @@ from graph import Graph
 
 class Input_Frame(tkinter.Frame):
 
-    def __init__(self, master, root):
+    def __init__(self, master, GUI):
         super().__init__(master)
 
-        self.root = root
+        self.GUI = GUI
 
-        tkinter.Label(self, text = "Equation type: ").grid(column = 0, row = 0)
+        self.examples_frame = Examples_Frame(master = self, GUI = GUI)
+        self.examples_frame.grid(column = 0, row = 0)
+
+        tkinter.Label(self, text = "Equation type: ").grid(column = 0, row = 1)
 
         self.equation_type_var = tkinter.StringVar()
 
         self.equation_type_frame = tkinter.Frame(self)
-        self.equation_type_frame.grid(column = 0, row = 1)
+        self.equation_type_frame.grid(column = 0, row = 2)
 
         tkinter.Radiobutton(self.equation_type_frame, text="1D", variable = self.equation_type_var, value="1D",
                         command=self.equation_type_selected).grid(column = 0, row = 0)
@@ -28,7 +32,7 @@ class Input_Frame(tkinter.Frame):
         
         # Move origin to center
         self.origin_at_center_frame = tkinter.Frame(self)
-        self.origin_at_center_frame.grid(column = 0, row = 2)
+        self.origin_at_center_frame.grid(column = 0, row = 3)
         tkinter.Label(self.origin_at_center_frame, text = "Origin at center: ").grid(column = 0, row = 0)
 
         self.origin_at_center_checkbox_var = tkinter.IntVar()
@@ -37,18 +41,18 @@ class Input_Frame(tkinter.Frame):
                             onvalue = 1, offvalue = 0).grid(column = 1, row = 0)
 
         self.equations_input_frame = None
-        self.equations_input_frame_row = 3
+        self.equations_input_frame_row = 4
 
-        self.root.after_idle(self.init_widgets)
+        self.GUI.after_idle(self.init_widgets)
 
     def on_origin_at_center_checkbox_check(self):
         self.graph.origin_at_center_bool = self.origin_at_center_checkbox_var.get()
 
     def init_widgets(self):
-        self.graph = Graph(self.root)
+        self.graph = Graph(self.GUI)
 
-        self.equations_input_1D = Equations_Input_1D(self, self.root, self.graph)
-        self.equations_input_2D = Equations_Input_2D(self, self.root, self.graph)
+        self.equations_input_1D = Equations_Input_1D(self, self.GUI, self.graph)
+        self.equations_input_2D = Equations_Input_2D(self, self.GUI, self.graph)
 
     def equation_type_selected(self):
         equation_type = self.equation_type_var.get()

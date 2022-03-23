@@ -1,0 +1,13 @@
+[
+    {
+        "text": "Sine curve",
+        "equation_type": "1D",
+        "equation_y": "100*sin(w*t+k*x)"
+    },
+    {
+        "text": "Parametrized circle",
+        "equation_type": "2D",
+        "equation_y": "100*sin(w*t+k)",
+        "equation_x": "100*cos(w*t+k)"
+    }
+]
