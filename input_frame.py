@@ -67,6 +67,8 @@ class Input_Frame(tkinter.Frame):
             self.equations_input_1D.enabled = True
             self.equations_input_2D.enabled = False
 
+            self.graph.point_radius_slider.set_value(1)
+
         elif equation_type == "2D":
             if self.equations_input_frame is not None:
                 self.equations_input_frame.grid_forget()
@@ -76,6 +78,8 @@ class Input_Frame(tkinter.Frame):
             self.equations_input_frame = self.equations_input_2D
             self.equations_input_1D.enabled = False
             self.equations_input_2D.enabled = True
+
+            self.graph.point_radius_slider.set_value(10)
 
         try: 
             self.equations_input_frame.plot_on_graph()
