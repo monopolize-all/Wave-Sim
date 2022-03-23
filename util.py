@@ -23,8 +23,8 @@ class FloatEntry(tkinter.Entry):
 
 class Variable_Slider_Widget(tkinter.Frame):
 
-    SLIDER_DEFAULT_LOW = -100
-    SLIDER_DEFAULT_HIGH = 100
+    SLIDER_DEFAULT_LOW = 0
+    SLIDER_DEFAULT_HIGH = 1
 
     def __init__(self, master, text, validate_func = None, result_var = None):
         super().__init__(master)
@@ -41,7 +41,8 @@ class Variable_Slider_Widget(tkinter.Frame):
         else:
             self.result_var = result_var
         
-        resolution = self.number_of_values // (self.SLIDER_DEFAULT_HIGH - self.SLIDER_DEFAULT_LOW)
+        #resolution = self.number_of_values // (self.SLIDER_DEFAULT_HIGH - self.SLIDER_DEFAULT_LOW)
+        resolution = (self.SLIDER_DEFAULT_HIGH - self.SLIDER_DEFAULT_LOW) / self.number_of_values
         self.slider = tkinter.Scale(self, variable = self.result_var, from_ = self.SLIDER_DEFAULT_LOW, 
                         to = self.SLIDER_DEFAULT_HIGH, orient = tkinter.HORIZONTAL,
                         resolution = resolution)
@@ -91,7 +92,7 @@ class Variable_Slider_Widget(tkinter.Frame):
 class Time_Slider_Widget(tkinter.Frame):
 
     T_VAR_SPEED_LOW = 0
-    T_VAR_SPEED_HIGH = 10
+    T_VAR_SPEED_HIGH = 100
 
     GRAPH_REFRESH_DEAY_LOW = 10
     GRAPH_REFRESH_DEAY_HIGH = 1000
@@ -115,6 +116,9 @@ class Time_Slider_Widget(tkinter.Frame):
         self.t_var_entry = FloatEntry(self.frame1, textvariable = self.t_var)
         self.t_var_entry.grid(column = 1, row = 0)
 
+        self.t_var_reset = tkinter.Button(self.frame1, text = "Reset", command = self.on_t_var_reset_call)
+        self.t_var_reset.grid(column = 2, row = 0)
+
         self.t_var_speed_slider_widget = Variable_Slider_Widget(self, 
                 "Time flow rate(/s): ", validate_func = self.on_t_var_speed_change)
         self.t_var_speed_slider_widget.set_limits(self.T_VAR_SPEED_LOW, self.T_VAR_SPEED_HIGH)
@@ -129,6 +133,9 @@ class Time_Slider_Widget(tkinter.Frame):
         self.graph_refresh_delay_slider_widget.grid(column = 0, row = 2)
 
         self.after(int(self.graph_refresh_delay), self.refresh_graph)
+
+    def on_t_var_reset_call(self):
+        self.t_var.set(0)
 
     def refresh_graph(self):
         self.after(int(self.graph_refresh_delay), self.refresh_graph)
