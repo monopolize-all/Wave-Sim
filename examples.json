@@ -9,5 +9,10 @@
         "equation_type": "2D",
         "equation_y": "100*sin(w*t+k)",
         "equation_x": "100*cos(w*t+k)"
+    },
+    {
+        "text": "Carrier wave",
+        "equation_type": "1D",
+        "equation_y": "100 * (sin(w1*t+k1*x+c1) * sin(w2*t+k2*x+c2))"
     }
 ]
