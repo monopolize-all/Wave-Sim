@@ -41,6 +41,7 @@ class Equation:
 
             elif self.constants[index] == "t":
                 self.constants.insert(0, self.constants.pop(index))
+                index += 1
 
             else:
                 index += 1
