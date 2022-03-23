@@ -39,6 +39,9 @@ class Equation:
             if hasattr(math, self.constants[index]) or self.constants[index] in self.CONSTANTS_TO_IGNORE:
                 self.constants.pop(index)
 
+            elif self.constants[index] == "t":
+                self.constants.insert(0, self.constants.pop(index))
+
             else:
                 index += 1
 
