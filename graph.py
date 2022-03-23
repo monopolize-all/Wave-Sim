@@ -4,9 +4,13 @@ from util import Variable_Slider_Widget
 
 class Graph(tkinter.Toplevel):
 
-    PLOTTER_WIDTH, PLOTTER_HEIGHT = (400, 400)
+    PLOTTER_SIZE = (400, 400)
+
+    PLOTTER_WIDTH, PLOTTER_HEIGHT = PLOTTER_SIZE
     BACKGROUND_COLOUR = "#ffffff"
     POINTS_COLOUR = "#000000"
+
+    POINTS_OFFSET = PLOTTER_SIZE[0] // 2, PLOTTER_SIZE[1] // 2
 
     def __init__(self, master: tkinter.Tk):
         super().__init__(master)
@@ -33,6 +37,8 @@ class Graph(tkinter.Toplevel):
         self.point_radius_slider.set_number_of_values(20)
         self.point_radius_slider.pack()
 
+        self.origin_at_center_bool = 0
+
     def point_radius_slider_validate(self, var = None, indx = None, mode = None):
         self.point_radius = self.point_radius_slider.get_value()
 
@@ -50,7 +56,20 @@ class Graph(tkinter.Toplevel):
         for point in points:
             self.draw_point(*point)
 
+    def get_plotter_range(self):
+        start_x = start_y = 0
+        stop_x, stop_y = self.PLOTTER_SIZE
+        if self.origin_at_center_bool:
+            start_x -= self.POINTS_OFFSET[0]
+            start_y -= self.POINTS_OFFSET[1]
+            stop_x -= self.POINTS_OFFSET[0]
+            stop_y -= self.POINTS_OFFSET[1]
+        return (start_x, stop_x), (start_y, stop_y)
+
     def draw_point(self, x, y):
+        if self.origin_at_center_bool:
+            x += self.POINTS_OFFSET[0]
+            y += self.POINTS_OFFSET[1]
         self.canvas.create_oval(x, y, x, y, width = self.point_radius, fill = self.POINTS_COLOUR)
         #self.canvas.create_line(x, y, x+1, y, fill = self.POINTS_COLOUR)
         

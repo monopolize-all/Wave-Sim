@@ -25,9 +25,24 @@ class Input_Frame(tkinter.Frame):
         tkinter.Radiobutton(self.equation_type_frame, text="2D", variable = self.equation_type_var, value="2D",
                         command=self.equation_type_selected).grid(column = 1, row = 0)
 
+        
+        # Move origin to center
+        self.origin_at_center_frame = tkinter.Frame(self)
+        self.origin_at_center_frame.grid(column = 0, row = 2)
+        tkinter.Label(self.origin_at_center_frame, text = "Origin at center: ").grid(column = 0, row = 0)
+
+        self.origin_at_center_checkbox_var = tkinter.IntVar()
+        tkinter.Checkbutton(self.origin_at_center_frame, command = self.on_origin_at_center_checkbox_check,
+                            variable = self.origin_at_center_checkbox_var,
+                            onvalue = 1, offvalue = 0).grid(column = 1, row = 0)
+
         self.equations_input_frame = None
+        self.equations_input_frame_row = 3
 
         self.root.after_idle(self.init_widgets)
+
+    def on_origin_at_center_checkbox_check(self):
+        self.graph.origin_at_center_bool = self.origin_at_center_checkbox_var.get()
 
     def init_widgets(self):
         self.graph = Graph(self.root)
@@ -42,7 +57,7 @@ class Input_Frame(tkinter.Frame):
             if self.equations_input_frame is not None:
                 self.equations_input_frame.grid_forget()
 
-            self.equations_input_1D.grid(column = 0, row = 2)
+            self.equations_input_1D.grid(column = 0, row = self.equations_input_frame_row)
 
             self.equations_input_frame = self.equations_input_1D
             self.equations_input_1D.enabled = True
@@ -52,7 +67,7 @@ class Input_Frame(tkinter.Frame):
             if self.equations_input_frame is not None:
                 self.equations_input_frame.grid_forget()
 
-            self.equations_input_2D.grid(column = 0, row = 2)
+            self.equations_input_2D.grid(column = 0, row = self.equations_input_frame_row)
 
             self.equations_input_frame = self.equations_input_2D
             self.equations_input_1D.enabled = False
