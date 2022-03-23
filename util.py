@@ -25,6 +25,7 @@ class Variable_Slider_Widget(tkinter.Frame):
 
     SLIDER_DEFAULT_LOW = 0
     SLIDER_DEFAULT_HIGH = 1
+    SLIDER_DEFAULT_VALUE = (SLIDER_DEFAULT_LOW + SLIDER_DEFAULT_HIGH) / 2
 
     def __init__(self, master, text, validate_func = None, result_var = None):
         super().__init__(master)
@@ -35,7 +36,7 @@ class Variable_Slider_Widget(tkinter.Frame):
         self.label.grid(column = 0, row = 0)
 
         if result_var is None:
-            self.result_var = tkinter.DoubleVar(self)
+            self.result_var = tkinter.DoubleVar(self, value = self.SLIDER_DEFAULT_VALUE)
             self.result_var.trace_add("write", validate_func)
 
         else:
