@@ -26,7 +26,8 @@ class Equations_Input_1D(tkinter.Frame):
         self.equation_stringvar = tkinter.StringVar()
 
         self.equation_stringvar.trace_add("write", self.generate_parameters)
-        self.equation_entry = tkinter.Entry(self.equations_input_frame, textvariable = self.equation_stringvar)
+        self.equation_entry = tkinter.Entry(self.equations_input_frame, textvariable = self.equation_stringvar, 
+                                            width = 50)
         self.equation_entry.grid(column = 1, row = 0)
 
         self.equation: Equation

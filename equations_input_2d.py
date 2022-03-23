@@ -27,7 +27,8 @@ class Equations_Input_2D(tkinter.Frame):
         self.equation_x_stringvar = tkinter.StringVar()
 
         self.equation_x_stringvar.trace_add("write", self.generate_parameters)
-        self.equation_x_entry = tkinter.Entry(self.equations_input_frame, textvariable = self.equation_x_stringvar)
+        self.equation_x_entry = tkinter.Entry(self.equations_input_frame, textvariable = self.equation_x_stringvar,
+                                            width = 50)
         self.equation_x_entry.grid(column = 1, row = 0)
 
 
@@ -36,7 +37,8 @@ class Equations_Input_2D(tkinter.Frame):
         self.equation_y_stringvar = tkinter.StringVar()
 
         self.equation_y_stringvar.trace_add("write", self.generate_parameters)
-        self.equation_y_entry = tkinter.Entry(self.equations_input_frame, textvariable = self.equation_y_stringvar)
+        self.equation_y_entry = tkinter.Entry(self.equations_input_frame, textvariable = self.equation_y_stringvar,
+                                            width = 50)
         self.equation_y_entry.grid(column = 1, row = 1)
 
         self.equation_x: Equation
