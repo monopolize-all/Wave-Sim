@@ -37,7 +37,7 @@ class Graph(tkinter.Toplevel):
         self.point_radius_slider.set_number_of_values(20)
         self.point_radius_slider.pack()
 
-        self.origin_at_center_bool = 0
+        self.origin_at_center_bool = 1
 
     def point_radius_slider_validate(self, var = None, indx = None, mode = None):
         self.point_radius = self.point_radius_slider.get_value()

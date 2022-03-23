@@ -36,6 +36,7 @@ class Input_Frame(tkinter.Frame):
         tkinter.Label(self.origin_at_center_frame, text = "Origin at center: ").grid(column = 0, row = 0)
 
         self.origin_at_center_checkbox_var = tkinter.IntVar()
+        self.origin_at_center_checkbox_var.set(1)
         tkinter.Checkbutton(self.origin_at_center_frame, command = self.on_origin_at_center_checkbox_check,
                             variable = self.origin_at_center_checkbox_var,
                             onvalue = 1, offvalue = 0).grid(column = 1, row = 0)
